@@ -1,16 +1,16 @@
 import React from "react";
 
-function Department(props){
-    const {department} = props
+export default class Department extends React.Component{
 
-    console.log("---Departments", props)
+    render() {
+        const {department} = this.props;
 
-    return (
-                <tr>
-                    <th>{department.id}</th>
-                    <th>{department.name}</th>
-                </tr>
-    )
+        return (
+            <tr>
+                <th>{department.id}</th>
+                <th>{department.name}</th>
+            </tr>
+        )
+    }
 }
 
-export default Department
