@@ -77,10 +77,6 @@ export default class DepartmentList extends React.Component{
             .then( data => {
                 this.setState({departmentsList: data})
             });
-
-       /* fetch('http://localhost:8080/departments')
-            .then(response => response.json())
-            .then(data => this.setState({departmentList: data}));*/
     }
 
 }
