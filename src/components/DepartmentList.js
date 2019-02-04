@@ -5,7 +5,7 @@ import departments from "../departments";
 export default class DepartmentList extends React.Component{
     constructor(props){
         super(props);
-        this.state = {departmentsList: departments, value: ''};
+        this.state = {departmentsList: departments, value: '', action:'addDepartment'};
     }
 
     render(){
@@ -18,9 +18,16 @@ export default class DepartmentList extends React.Component{
                         Name:
                         <input type="text" value={this.state.value} onChange={this.handleChange.bind(this)}/>
                     </label>
-                    <button onClick={this.onSubmit.bind(this)}>Add department</button>
+                    <select onChange={this.selectChange.bind(this)}>
+                        <option value="addDepartment">Add department</option>
+                        <option value="replaceDepartment">Replace department</option>
+                        <option value="updateDepartment">Update department</option>
+                        <option value="deleteDepartment">Delete department</option>
+                    </select>
+                    <button onClick={this.onSubmit.bind(this)}>Submit</button>
                 </form>
-               <button onClick={this.changeName.bind(this)}>Update table</button>
+
+               <button value={this.state.action} onClick={this.updateTable.bind(this)}>Update table</button>
                 <table>
                     <tbody>
                     <tr>
@@ -35,6 +42,11 @@ export default class DepartmentList extends React.Component{
         )
     }
 
+    selectChange(event){
+        this.setState({action: event.target.value});
+        console.log(event.target.value);
+    }
+
     handleChange(event){
         this.setState({value: event.target.value});
     }
@@ -46,7 +58,6 @@ export default class DepartmentList extends React.Component{
             "name": this.state.value
         }
 
-
         console.log(data);
 
         fetch('http://localhost:8080/departments', {
@@ -56,18 +67,18 @@ export default class DepartmentList extends React.Component{
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
-        }).then(function (response) {
+        }).then(response => {
                 return response.json;
             })
-            .then(function (result) {
+            .then(result => {
                 console.log(result.json);
             })
-            .catch (function (error) {
-                console.log('Request failed', error);
+            .catch (error =>{
+                console.log('Request failed (POST)', error);
             });
     }
 
-    changeName() {
+    updateTable() {
         /*const newList = this.state.departmentsList;
         newList[0].name = "test";
         this.setState({departments: newList});*/
@@ -76,6 +87,9 @@ export default class DepartmentList extends React.Component{
             .then( result => result.json())
             .then( data => {
                 this.setState({departmentsList: data})
+            })
+            .catch(error =>{
+                console.log('request failed (GET)', error);
             });
     }
 
