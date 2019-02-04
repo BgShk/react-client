@@ -1,11 +1,15 @@
 import React from "react";
 import Department from "./Department";
 import departments from "../departments";
+import "./style.css"
 
 export default class DepartmentList extends React.Component{
     constructor(props){
         super(props);
-        this.state = {departmentsList: departments, value: '', action:'addDepartment'};
+        this.state = {departmentsList: departments,
+            value: '',
+            action: 'addDepartment',
+            isHidden: true};
     }
 
     render(){
@@ -15,6 +19,9 @@ export default class DepartmentList extends React.Component{
             <div>
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <label>
+                        <div className={this.state.isHidden ? 'hidden' : ''}>
+                            <input type="text" />
+                        </div>
                         Name:
                         <input type="text" value={this.state.value} onChange={this.handleChange.bind(this)}/>
                     </label>
@@ -44,6 +51,16 @@ export default class DepartmentList extends React.Component{
 
     selectChange(event){
         this.setState({action: event.target.value});
+
+         if(event.target.value === 'replaceDepartment'
+             || event.target.value === 'updateDepartment'
+             || event.target.value === 'deleteDepartment'){
+
+             this.setState({isHidden: false});
+         }else{
+             this.setState({isHidden: true});
+         }
+
         console.log(event.target.value);
     }
 
