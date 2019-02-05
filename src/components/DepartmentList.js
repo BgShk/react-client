@@ -8,6 +8,7 @@ export default class DepartmentList extends React.Component{
         super(props);
         this.state = {departmentsList: departments,
             value: '',
+            newName:'',
             action: 'addDepartment',
             isHidden: true};
     }
@@ -19,11 +20,9 @@ export default class DepartmentList extends React.Component{
             <div>
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <label>
-                        <div className={this.state.isHidden ? 'hidden' : ''}>
-                            <input type="text" />
-                        </div>
                         Name:
-                        <input type="text" value={this.state.value} onChange={this.handleChange.bind(this)}/>
+                        <input type="text" value={this.state.value} onChange={this.handleNameChange.bind(this)}/>
+
                     </label>
                     <select onChange={this.selectChange.bind(this)}>
                         <option value="addDepartment">Add department</option>
@@ -32,6 +31,10 @@ export default class DepartmentList extends React.Component{
                         <option value="deleteDepartment">Delete department</option>
                     </select>
                     <button onClick={this.onSubmit.bind(this)}>Submit</button>
+                    <div className={this.state.isHidden ? 'hidden' : ''}>
+                        New name:
+                        <input type="text" onChange={this.handleNewNameChange.bind(this)}/>
+                    </div>
                 </form>
 
                <button value={this.state.action} onClick={this.updateTable.bind(this)}>Update table</button>
@@ -53,8 +56,7 @@ export default class DepartmentList extends React.Component{
         this.setState({action: event.target.value});
 
          if(event.target.value === 'replaceDepartment'
-             || event.target.value === 'updateDepartment'
-             || event.target.value === 'deleteDepartment'){
+             || event.target.value === 'updateDepartment'){
 
              this.setState({isHidden: false});
          }else{
@@ -64,35 +66,110 @@ export default class DepartmentList extends React.Component{
         console.log(event.target.value);
     }
 
-    handleChange(event){
+    handleNameChange(event){
         this.setState({value: event.target.value});
+    }
+
+    handleNewNameChange(event){
+        this.setState({newName: event.target.value});
     }
 
     onSubmit(event){
         event.preventDefault();
+        var data;
 
-        var data = {
-            "name": this.state.value
+        switch(this.state.action){
+            case 'addDepartment':
+                data = {
+                    "name": this.state.value
+                }
+                console.log(data);
+
+                fetch('http://localhost:8080/departments', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                    }).then(response => {
+                        return response.json;
+                    })
+                    .then(result => {
+                        console.log(result.json);
+                    })
+                    .catch (error =>{
+                        console.log('Request failed (POST)', error);
+                    });
+
+                break;
+
+            case 'updateDepartment':
+                data = {
+                    "name": this.state.newName
+                }
+                fetch('http://localhost:8080/departments?name=' + this.state.value, {
+                    method: 'PATCH',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                    }).then(response => {
+                        return response.json;
+                    })
+                    .then(result => {
+                        console.log(result.json);
+                    })
+                    .catch (error =>{
+                        console.log('Request failed (POST)', error);
+                    });
+
+                break;
+
+            case 'deleteDepartment':
+                fetch('http://localhost:8080/departments?name=' + this.state.value, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    }).then(response => {
+                        return response.json;
+                    })
+                    .then(result => {
+                        console.log(result.json);
+                    })
+                    .catch (error =>{
+                        console.log('Request failed (POST)', error);
+                    });
+                break;
+
+            case 'replaceDepartment':
+                data = {
+                    "name": this.state.newName
+                }
+                fetch('http://localhost:8080/departments?name=' + this.state.value, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                    }).then(response => {
+                        return response.json;
+                    })
+                    .then(result => {
+                        console.log(result.json);
+                    })
+                    .catch (error =>{
+                        console.log('Request failed (POST)', error);
+                    });
+
+                break;
+            default:
+                console.log("Unknown selection");
         }
-
-        console.log(data);
-
-        fetch('http://localhost:8080/departments', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        }).then(response => {
-                return response.json;
-            })
-            .then(result => {
-                console.log(result.json);
-            })
-            .catch (error =>{
-                console.log('Request failed (POST)', error);
-            });
     }
 
     updateTable() {
