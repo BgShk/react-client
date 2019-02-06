@@ -97,6 +97,7 @@ export default class DepartmentList extends React.Component{
                     })
                     .then(result => {
                         console.log(result.json);
+                        this.updateTable();
                     })
                     .catch (error =>{
                         console.log('Request failed (POST)', error);
@@ -108,7 +109,7 @@ export default class DepartmentList extends React.Component{
                 data = {
                     "name": this.state.newName
                 }
-                fetch('http://localhost:8080/departments?name=' + this.state.value, {
+                fetch('http://localhost:8080/departments/' + this.state.value, {
                     method: 'PATCH',
                     headers: {
                         'Accept': 'application/json',
@@ -120,28 +121,26 @@ export default class DepartmentList extends React.Component{
                     })
                     .then(result => {
                         console.log(result.json);
+                        this.updateTable();
                     })
                     .catch (error =>{
-                        console.log('Request failed (POST)', error);
+                        console.log('Request failed (PATCH)', error);
                     });
 
                 break;
 
             case 'deleteDepartment':
-                fetch('http://localhost:8080/departments?name=' + this.state.value, {
+                fetch('http://localhost:8080/departments/' + this.state.value , {
                     method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
                     }).then(response => {
                         return response.json;
                     })
                     .then(result => {
                         console.log(result.json);
+                        this.updateTable();
                     })
                     .catch (error =>{
-                        console.log('Request failed (POST)', error);
+                        console.log('Request failed (DELETE)', error);
                     });
                 break;
 
@@ -149,7 +148,7 @@ export default class DepartmentList extends React.Component{
                 data = {
                     "name": this.state.newName
                 }
-                fetch('http://localhost:8080/departments?name=' + this.state.value, {
+                fetch('http://localhost:8080/departments/' + this.state.value, {
                     method: 'PUT',
                     headers: {
                         'Accept': 'application/json',
@@ -161,14 +160,16 @@ export default class DepartmentList extends React.Component{
                     })
                     .then(result => {
                         console.log(result.json);
+                        this.updateTable();
                     })
                     .catch (error =>{
-                        console.log('Request failed (POST)', error);
+                        console.log('Request failed (PUT)', error);
                     });
 
                 break;
             default:
                 console.log("Unknown selection");
+                break;
         }
     }
 
